@@ -5,7 +5,7 @@ import { AIConfig } from "@/components/settings/ai-config"
 import { DatabaseConfig } from "@/components/settings/database-config"
 import { PersonnelManagement } from "@/components/settings/personnel-management"
 import { AlertsConfig } from "@/components/settings/alerts-config"
-import { Tabs } from "@/components/ui/tabs"
+import { TabsContent } from "@/components/ui/tabs"
 
 export default function SettingsPage() {
   return (
@@ -14,28 +14,21 @@ export default function SettingsPage() {
 
       <div className="flex-1 p-6">
         <SettingsTabs>
-          <Tabs>
-            <Tabs.Trigger value="whatsapp">WhatsApp</Tabs.Trigger>
-            <Tabs.Trigger value="ai">AI</Tabs.Trigger>
-            <Tabs.Trigger value="database">Database</Tabs.Trigger>
-            <Tabs.Trigger value="personnel">Personnel</Tabs.Trigger>
-            <Tabs.Trigger value="alerts">Alerts</Tabs.Trigger>
-            <Tabs.Content value="whatsapp">
-              <WhatsAppConfig />
-            </Tabs.Content>
-            <Tabs.Content value="ai">
-              <AIConfig />
-            </Tabs.Content>
-            <Tabs.Content value="database">
-              <DatabaseConfig />
-            </Tabs.Content>
-            <Tabs.Content value="personnel">
-              <PersonnelManagement />
-            </Tabs.Content>
-            <Tabs.Content value="alerts">
-              <AlertsConfig />
-            </Tabs.Content>
-          </Tabs>
+          <TabsContent value="whatsapp">
+            <WhatsAppConfig />
+          </TabsContent>
+          <TabsContent value="ai">
+            <AIConfig />
+          </TabsContent>
+          <TabsContent value="database">
+            <DatabaseConfig />
+          </TabsContent>
+          <TabsContent value="personnel">
+            <PersonnelManagement />
+          </TabsContent>
+          <TabsContent value="alerts">
+            <AlertsConfig />
+          </TabsContent>
         </SettingsTabs>
       </div>
     </div>

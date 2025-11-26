@@ -8,9 +8,10 @@ import {
   BarChart3,
   AlertTriangle,
   Database,
+  LogOut,
 } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 
 import {
   Sidebar,
@@ -24,6 +25,7 @@ import {
   SidebarMenuItem,
   SidebarFooter,
 } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
 
 const navigationItems = [
   {
@@ -85,6 +87,17 @@ const navigationItems = [
 
 export function AppSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    // Clear mock user cookie and localStorage
+    document.cookie = "mock_user=; path=/; max-age=0"
+    localStorage.removeItem("mock_user")
+
+    // Redirect to login
+    router.push("/login")
+    router.refresh()
+  }
 
   return (
     <Sidebar>
@@ -123,7 +136,15 @@ export function AppSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border p-4">
+      <SidebarFooter className="border-t border-sidebar-border p-4 space-y-3">
+        <Button
+          variant="outline"
+          className="w-full justify-start gap-2"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4" />
+          Cerrar Sesión
+        </Button>
         <div className="text-xs text-sidebar-foreground/60">
           <p className="font-medium">Sistema de Emergencias</p>
           <p>Versión 1.0.0</p>

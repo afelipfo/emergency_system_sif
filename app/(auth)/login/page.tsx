@@ -31,9 +31,20 @@ export default function LoginPage() {
       if (!supabase) {
         // Mock login for development without Supabase
         console.log("[v0] Mock login - Supabase not configured")
-        localStorage.setItem("mock_user", JSON.stringify({ email, role: "admin" }))
-        router.push("/")
-        return
+
+        // Hardcoded credentials for development
+        if (email === "admin" && password === "admin123") {
+          // Set cookie for middleware authentication
+          document.cookie = "mock_user=" + JSON.stringify({ email: "admin@medellin.gov.co", role: "admin" }) + "; path=/; max-age=86400"
+          localStorage.setItem("mock_user", JSON.stringify({ email: "admin@medellin.gov.co", role: "admin" }))
+          router.push("/")
+          router.refresh()
+          return
+        } else {
+          setError("Credenciales incorrectas. Usuario: admin, Contraseña: admin123")
+          setLoading(false)
+          return
+        }
       }
 
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
@@ -82,11 +93,11 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Correo Electrónico</Label>
+              <Label htmlFor="email">Usuario</Label>
               <Input
                 id="email"
-                type="email"
-                placeholder="usuario@medellin.gov.co"
+                type="text"
+                placeholder="admin"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -99,7 +110,7 @@ export default function LoginPage() {
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder="admin123"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
