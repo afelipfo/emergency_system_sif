@@ -28,7 +28,7 @@ export default function LoginPage() {
     try {
       const supabase = createBrowserClient()
 
-      if (!supabase) {
+      if (!supabase || process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("mock")) {
         // Mock login for development without Supabase
         console.log("[v0] Mock login - Supabase not configured")
 
