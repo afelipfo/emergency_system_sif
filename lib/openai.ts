@@ -1,10 +1,26 @@
 import OpenAI from "openai"
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
+// Lazy initialization of OpenAI client to avoid build-time errors when env vars are missing
+let openaiClient: OpenAI | null = null
+
+function getOpenAIClient() {
+  if (openaiClient) return openaiClient
+
+  const apiKey = process.env.OPENAI_API_KEY
+
+  if (!apiKey && process.env.NODE_ENV === "production" && !process.env.VERCEL) {
+    console.warn("OPENAI_API_KEY is missing")
+  }
+
+  openaiClient = new OpenAI({
+    apiKey: apiKey || "dummy-key-for-build",
+  })
+
+  return openaiClient
+}
 
 export async function transcribeAudio(audioBuffer: ArrayBuffer): Promise<string> {
+  const openai = getOpenAIClient()
   const file = new File([audioBuffer], "audio.ogg", { type: "audio/ogg" })
 
   const transcription = await openai.audio.transcriptions.create({
@@ -38,7 +54,7 @@ Esquema JSON requerido:
 
 Transcripción: ${transcription}`
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAIClient().chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [{ role: "user", content: prompt }],
     response_format: { type: "json_object" },
@@ -49,7 +65,7 @@ Transcripción: ${transcription}`
 }
 
 export async function generateEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
+  const response = await getOpenAIClient().embeddings.create({
     model: "text-embedding-3-small",
     input: text,
   })
@@ -58,7 +74,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
 }
 
 export async function queryRAG(question: string, context: string): Promise<string> {
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAIClient().chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
       {
@@ -95,7 +111,7 @@ Transcripción: ${report.transcripcion}
     )
     .join("\n\n")
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAIClient().chat.completions.create({
     model: "gpt-4-turbo-preview",
     messages: [
       {
